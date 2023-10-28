@@ -21,7 +21,7 @@ public class EmailService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(email);
         mailMessage.setSubject("AI-Together Image Result");
-        mailMessage.setText(FRONT_SERVER + "?id=" + url);
+        mailMessage.setText(FRONT_SERVER + "/result?id=" + url);
         emailSender.send(mailMessage);
     }
 }

@@ -41,7 +41,7 @@ public class InteractionController {
     private String saveImage(MultipartFile image) {
         String filename;
         try {
-            Path path = Paths.get("ai-together/interaction-ai/images/inputs/");
+            Path path = Paths.get("ai-together/gather-ai-front/public/images/inputs/");
             if(!Files.exists(path)) Files.createDirectory(path);
 
             filename = FileUtils.generateUniqueFileName();

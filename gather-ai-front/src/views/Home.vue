@@ -100,13 +100,13 @@
        axios.post('http://localhost:8080/interaction', formData)
          .then(() => {
            this.isButtonDisabled = true;
-           setTimeOut(() => {
+           setTimeout(() => {
              this.isButtonDisabled = false;
-           }, 180000);
-           alert("Check your email. The result will be shown in 10 mins");
+           }, 60000);
+           alert("Check your email. The result will be sent in 10 mins");
          })
-         .catch(() => {
-           this.$notify({ text: "Image upload is failed. Try again", type: 'error'});
+         .catch((e) => {
+           this.$notify({ text: "Image upload is failed. Try again after 1 mins", type: 'error'});
          });
      },
      validateEmail() {

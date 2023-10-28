@@ -70,15 +70,15 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
     return results
 
 
-BASE_DIR = 'ai-together/interaction-ai/images/inputs/'
-SAVE_DIR = 'ai-together/interaction-ai/images/outputs/'
+BASE_DIR = 'ai-together/gather-ai-front/public/images/inputs/'
+SAVE_DIR = 'ai-together/gather-ai-front/public/images/outputs/'
 def process_image(filename, prompt):
 
     input = Image.open(BASE_DIR + filename)
     image = np.array(input)
 
     num_samples = 1
-    image_resolution = 128
+    image_resolution = 512
     strength = 0.8
     guess_mode = False
     ddim_steps = 10

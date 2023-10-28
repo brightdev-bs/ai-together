@@ -91,7 +91,7 @@ def process_image(filename, prompt):
     results = process(image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta)
     for i, image in enumerate(results):
         pil_image = Image.fromarray(image)
-        file_path = SAVE_DIR + str(uuid.uuid4()) + '.png'
+        file_path = SAVE_DIR + str(filename) + '.png'
         pil_image.save(file_path)
 
 if __name__ == "__main__":

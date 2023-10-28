@@ -1,13 +1,14 @@
 package com.example.aitogetherbackend;
 
+import com.example.aitogetherbackend.email.EmailService;
+import com.example.aitogetherbackend.global.constants.Response;
+import com.example.aitogetherbackend.global.response.ApiResponse;
 import com.example.aitogetherbackend.global.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,22 +25,23 @@ import java.nio.file.Paths;
 @RequiredArgsConstructor
 public class InteractionController {
 
+    private final EmailService emaiLService;
+
     @PostMapping("/interaction")
-    public void processImage(@RequestPart MultipartFile image) {
-
+    public ApiResponse processImage(@RequestPart MultipartFile image,
+                                    String email,
+                                    @RequestParam(defaultValue = "scribble") String command)
+    {
         String filename = saveImage(image);
-
-        // 비동기 코드 작성 -> 인공지능 모델 구동
-        URI getTestUri =
-        WebClient.create()
-                .get()
-                .url()
+        startAiModel(command, filename);
+        emaiLService.sendEmail(email, filename);
+        return ApiResponse.of(HttpStatus.OK.toString(), Response.SUCCESS.toString());
     }
 
     private String saveImage(MultipartFile image) {
         String filename;
         try {
-            Path path = Paths.get("images");
+            Path path = Paths.get("ai-together/interaction-ai/images/inputs/");
             if(!Files.exists(path)) Files.createDirectory(path);
 
             filename = FileUtils.generateUniqueFileName();
@@ -50,5 +52,26 @@ public class InteractionController {
         }
 
         return filename;
+    }
+
+    private void startAiModel(String command, String filename) {
+        try {
+            StringBuilder script = generateScript(filename, command);
+            ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", script.toString());
+            processBuilder.inheritIO();
+            processBuilder.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private StringBuilder generateScript(String filename, String command) {
+        StringBuilder script = new StringBuilder();
+        script.append("conda activate control ")
+                .append("&& ")
+                .append("python ai-together/interaction-ai/scribble2image.py ")
+                .append(filename).append(" ")
+                .append(command);
+        return script;
     }
 }

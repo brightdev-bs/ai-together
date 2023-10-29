@@ -99,7 +99,7 @@
 
        axios.post('http://localhost:8080/interaction', formData)
          .then(() => {
-           this.isButtonDisabled = true;
+           // this.isButtonDisabled = true;
            setTimeout(() => {
              this.isButtonDisabled = false;
            }, 60000);

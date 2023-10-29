@@ -19,13 +19,30 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.*;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class InteractionController {
 
+    static class Request {
+        String email;
+        String script;
+        String filename;
+
+        public Request(String email, String script, String filename) {
+            this.email = email;
+            this.script = script;
+            this.filename = filename;
+        }
+    }
+
     private final EmailService emaiLService;
+    private ExecutorService aiThreadPool = Executors.newSingleThreadExecutor();
+
+    private BlockingQueue<Request> queue = new LinkedBlockingQueue<>();
+    private volatile boolean isRunning = false;
 
     @PostMapping("/interaction")
     public ApiResponse processImage(@RequestPart MultipartFile image,
@@ -33,8 +50,12 @@ public class InteractionController {
                                     @RequestParam(defaultValue = "scribble") String command)
     {
         String filename = saveImage(image);
-        startAiModel(command, filename);
-        emaiLService.sendEmail(email, filename);
+        String script = generateScript(filename, command);
+        queue.add(new Request(email, script, filename));
+
+        if(!isRunning)
+            startAiModel();
+
         return ApiResponse.of(HttpStatus.OK.toString(), Response.SUCCESS.toString());
     }
 
@@ -54,24 +75,33 @@ public class InteractionController {
         return filename;
     }
 
-    private void startAiModel(String command, String filename) {
-        try {
-            StringBuilder script = generateScript(filename, command);
-            ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", script.toString());
-            processBuilder.inheritIO();
-            processBuilder.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private void startAiModel() {
+        isRunning = true;
+        aiThreadPool.execute(() -> {
+            try {
+                while(!queue.isEmpty()) {
+                    Request request = queue.poll();
+                    ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", request.script);
+                    processBuilder.inheritIO();
+                    Process process = processBuilder.start();
+
+                    process.waitFor();
+                    emaiLService.sendEmail(request.email, request.filename);
+                }
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        isRunning = false;
     }
 
-    private StringBuilder generateScript(String filename, String command) {
+    private String generateScript(String filename, String command) {
         StringBuilder script = new StringBuilder();
         script.append("conda activate control ")
                 .append("&& ")
                 .append("python ai-together/interaction-ai/scribble2image.py ")
                 .append(filename).append(" ")
                 .append(command);
-        return script;
+        return script.toString();
     }
 }

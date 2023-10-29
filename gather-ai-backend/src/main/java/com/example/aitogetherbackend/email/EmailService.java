@@ -17,11 +17,11 @@ public class EmailService {
     private final JavaMailSender emailSender;
 
     @Async
-    public void sendEmail(String email, String url) {
+    public void sendEmail(String email, String filename) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(email);
         mailMessage.setSubject("AI-Together Image Result");
-        mailMessage.setText(FRONT_SERVER + "/result?id=" + url);
+        mailMessage.setText(FRONT_SERVER + "/result?id=" + filename);
         emailSender.send(mailMessage);
     }
 }

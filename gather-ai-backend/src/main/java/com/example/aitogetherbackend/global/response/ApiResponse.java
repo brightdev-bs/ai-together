@@ -12,24 +12,24 @@ import java.util.List;
 public class ApiResponse {
 
     private final String statusCode;
-    private final Object data;
+    private final Object response;
 
-    private ApiResponse(String statusCode, Object data) {
+    private ApiResponse(String statusCode, Object response) {
         this.statusCode = statusCode;
-        this.data = data;
+        this.response = response;
     }
 
     public static ApiResponse of(String statusCode, Object data) {
         return ApiResponse.builder()
                 .statusCode(statusCode)
-                .data(data)
+                .response(data)
                 .build();
     }
 
     public static ApiResponse of(String statusCode, BindingResult bindingResult) {
         return ApiResponse.builder()
                 .statusCode(statusCode)
-                .data(createErrorMessage(bindingResult))
+                .response(createErrorMessage(bindingResult))
                 .build();
     }
 

@@ -1,0 +1,7 @@
+FROM openjdk:21
+WORDIR /app
+
+COPY . .
+#ENV SPRING_PROFILES_ACTIVE=prod
+RUN ./gradlew clean build -x test
+ENTRYPOINT ["java", "-jar", "/app/build/libs/ai-together-backend-0.0.1-SNAPSHOT.jar"]

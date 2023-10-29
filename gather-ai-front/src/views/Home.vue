@@ -97,7 +97,7 @@
        formData.append("command", this.command);
        formData.append("email", this.email);
 
-       axios.post('http://localhost:8080/interaction', formData)
+       axios.post(import.meta.env.VITE_BACKEND_ADDRESS + '/interaction', formData)
          .then(() => {
            // this.isButtonDisabled = true;
            setTimeout(() => {

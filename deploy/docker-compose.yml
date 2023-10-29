@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  ai-front:
+    container_name: front
+    build:
+      context: ../gather-ai-front
+      dockerfile: Dockerfile
+      args:
+        - VUE_APP_ADDRESS=http://localhost:3000
+        - VUE_APP_ADDRESS_API=http://localhost:3000/api
+    restart: always
+#    depends_on:
+#      - ai-backend
+
+#  ai-backend:
+#    container_name: backend
+#    build:
+#      context: ../gather-ai-backend
+#      dockerfile: Dockerfile
+#    restart: always

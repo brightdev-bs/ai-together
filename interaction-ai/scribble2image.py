@@ -70,8 +70,8 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
     return results
 
 
-BASE_DIR = 'ai-together/gather-ai-front/public/images/inputs/'
-SAVE_DIR = 'ai-together/gather-ai-front/public/images/outputs/'
+BASE_DIR = 'ai-together/gather-ai-front/dist/images/inputs/'
+SAVE_DIR = 'ai-together/gather-ai-front/dist/images/outputs/'
 def process_image(filename, prompt):
 
     input = Image.open(BASE_DIR + filename)

@@ -14,6 +14,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(FRONT_SERVER, "http://ai-tool.run");
+                .allowedOrigins(FRONT_SERVER);
     }
 }

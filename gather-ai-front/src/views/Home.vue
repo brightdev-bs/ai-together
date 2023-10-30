@@ -97,6 +97,8 @@
        formData.append("command", this.command);
        formData.append("email", this.email);
 
+       console.log(import.meta.env)
+       console.log(import.meta.env.VITE_BACKEND_ADDRESS);
        axios.post(import.meta.env.VITE_BACKEND_ADDRESS + '/interaction', formData)
          .then(() => {
            // this.isButtonDisabled = true;

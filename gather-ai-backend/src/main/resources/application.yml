@@ -14,5 +14,13 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+---
+spring:
+  profiles:
+    active: prod
 
-front-server: http://localhost:3000
+---
+spring:
+  profiles:
+    active: dev
+

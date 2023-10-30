@@ -23,15 +23,14 @@ export default {
   },
   mounted() {
     const filename = this.$route.query.id + '.png'
-    this.imagePath = './images/outputs/' + filename;
+    this.imagePath = '/images/outputs/' + filename;
+    console.log(this.imagePath);
     // 이미지 생성 되었는지 확인
     const img = new Image();
     img.src = this.imagePath;
-    img.onload = function() {
-
-    };
     img.onerror = (e) => {
       console.log(e)
+      console.log(this.imagePath);
       alert("The result is on the way. Please visit again after few minutes")
     };
   }
